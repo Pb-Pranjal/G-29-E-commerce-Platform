@@ -1,0 +1,90 @@
+{% extends 'homepage.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Order Details #{{ order.id }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Order Information</h5>
+                    <p><strong>Status:</strong> 
+                        <span class="badge {% if order.status == 'pending' %}bg-warning{% elif order.status == 'processing' %}bg-info{% elif order.status == 'shipped' %}bg-primary{% elif order.status == 'delivered' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ order.status|title }}
+                        </span>
+                    </p>
+                    <p><strong>Tracking Number:</strong> {{ order.tracking_number }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y" }}</p>
+                    <p><strong>Total Amount:</strong> ${{ order.total }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Delivery Address</h5>
+                    <p>{{ order.address }}</p>
+                    {% if order.latitude and order.longitude %}
+                    <div id="map" style="height: 200px; width: 100%;"></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h5>Ordered Items</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>${{ item.product.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if can_update_status %}
+            <div class="mt-4">
+                <h5>Update Order Status</h5>
+                <form method="post" action="{% url 'update_order_status' order.id %}">
+                    {% csrf_token %}
+                    <div class="btn-group">
+                        <button type="submit" name="status" value="processing" class="btn btn-info">Accept Order</button>
+                        <button type="submit" name="status" value="shipped" class="btn btn-primary">Mark as Shipped</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if order.latitude and order.longitude %}
+<script>
+    function initMap() {
+        const location = { lat: {{ order.latitude }}, lng: {{ order.longitude }} };
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: location,
+        });
+        new google.maps.Marker({
+            position: location,
+            map: map,
+        });
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+{% endif %}
+{% endblock %} 

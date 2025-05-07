@@ -1,0 +1,135 @@
+{% extends 'homepage.html' %}
+{% load static %}
+
+{% block content %}
+<div class="update-product-container">
+    <h2>Update Product</h2>
+    <form method="POST" class="update-product-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" value="{{ product.name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required>{{ product.description }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" value="{{ product.price }}" step="0.01" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" value="{{ product.stock }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="image_url">Image URL:</label>
+            <input type="url" id="image_url" name="image_url" value="{{ product.image_url }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" value="{{ product.category }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="on_sale">On Sale:</label>
+            <input type="checkbox" id="on_sale" name="on_sale" {% if product.on_sale %}checked{% endif %}>
+        </div>
+        
+        <div class="form-group" id="sale_price_group" style="display: {% if product.on_sale %}block{% else %}none{% endif %};">
+            <label for="sale_price">Sale Price:</label>
+            <input type="number" id="sale_price" name="sale_price" value="{{ product.sale_price }}" step="0.01">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Product</button>
+            <a href="{% url 'seller_product_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.update-product-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.update-product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+</style>
+
+<script>
+document.getElementById('on_sale').addEventListener('change', function() {
+    const salePriceGroup = document.getElementById('sale_price_group');
+    salePriceGroup.style.display = this.checked ? 'block' : 'none';
+});
+</script>
+{% endblock %}
