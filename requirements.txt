@@ -1,5 +1,17 @@
-Django
+# requirements for G-29 E-commerce Platform
+# Generated from project imports and settings
+
+Django==5.1.7
+requests>=2.28,<3
+
 gunicorn
 whitenoise
 dj-database-url
-psycopg2-binary   # if using Postgres
+# psycopg2-binary   # if using Postgres
+
+
+# Optional / recommended for deployment (uncomment if needed):
+# gunicorn
+# whitenoise
+# psycopg2-binary  # PostgreSQL support
+# pillow  # image handling if you add ImageField
